@@ -94,10 +94,9 @@ var QWebChannel = function(transport, initCallback)
         }
     }
 
-    this.execCallbacks = {};
+    this.execCallbacks = new Map(); // Cambiado de {} a Map
     this.execId = 0;
-    this.exec = function(data, callback)
-    {
+    this.exec = function(data, callback) {
         if (!callback) {
             // if no callback is given, send directly
             channel.send(data);
@@ -112,14 +111,13 @@ var QWebChannel = function(transport, initCallback)
             return;
         }
         data.id = channel.execId++;
-        channel.execCallbacks[data.id] = callback;
+        channel.execCallbacks.set(data.id, callback); // Reemplazado asignación por .set()
         channel.send(data);
     };
 
     this.objects = {};
 
-    this.handleSignal = function(message)
-    {
+    this.handleSignal = function(message) {
         var object = channel.objects[message.object];
         if (object) {
             object.signalEmitted(message.signal, message.args);
@@ -128,16 +126,18 @@ var QWebChannel = function(transport, initCallback)
         }
     }
 
-    this.handleResponse = function(message)
-    {
+    this.handleResponse = function(message) {
         if (!message.hasOwnProperty("id")) {
             console.error("Invalid response message received: ", JSON.stringify(message));
             return;
         }
-        channel.execCallbacks[message.id](message.data);
-        delete channel.execCallbacks[message.id];
+        // Reemplazado acceso directo por .get(), validación y .delete()
+        var cb = channel.execCallbacks.get(message.id);
+        if (cb) {
+            cb(message.data);
+            channel.execCallbacks.delete(message.id);
+        }
     }
-
     this.handlePropertyUpdate = function(message)
     {
         for (var i in message.data) {
