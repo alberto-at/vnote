@@ -36,7 +36,7 @@ class WaveDromRenderer extends GraphRenderer {
         Utils.checkSourceLine(p_node, graphDiv);
 
         Utils.replaceNodeWithPreCheck(p_node, graphDiv);
-
+        //comment 
         try {
             // ATTENTION: p_idx should start from 0 or style will be missing.
             WaveDrom.RenderWaveForm(p_idx,
