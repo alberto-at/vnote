@@ -36,15 +36,20 @@ class WaveDromRenderer extends GraphRenderer {
         Utils.checkSourceLine(p_node, graphDiv);
 
         Utils.replaceNodeWithPreCheck(p_node, graphDiv);
-        //comment 
+
         try {
             // ATTENTION: p_idx should start from 0 or style will be missing.
-            WaveDrom.RenderWaveForm(p_idx,
-                                    window.vxOptions.protectedView ? JSON.parse(p_node.textContent)
-                                        : eval('(' + p_node.textContent + ')'),
-                                    'vx-wavedrom-graph-');
-            if (window.vxOptions.protectedView) {
-                DocumentRenderer.sanitizeProtectedSvg(graphDiv.firstElementChild);
+            const waveData = JSON.parse(p_node.textContent);
+
+            WaveDrom.RenderWaveForm(
+                p_idx,
+                waveData,
+                'vx-wavedrom-graph-'
+            );
+
+            const svg = graphDiv.firstElementChild;
+            if (svg) {
+                DocumentRenderer.sanitizeProtectedSvg(svg);
             }
             window.vxImageViewer.setupSVGToView(graphDiv.children[0], true);
         } catch (p_err) {
@@ -81,18 +86,20 @@ class WaveDromRenderer extends GraphRenderer {
 
         try {
             // Always use 0 as the index.
+            const waveData = JSON.parse(p_text);
+
             WaveDrom.RenderWaveForm(0,
-                                    window.vxOptions.protectedView ? JSON.parse(p_text)
-                                        : eval('(' + p_text + ')'),
-                                    'vx-wavedrom-graph-stand-alone-' + p_idx);
+                waveData,
+                'vx-wavedrom-graph-stand-alone-' + p_idx);
         } catch (p_err) {
             console.error('failed to RenderWaveForm() for WaveDrom', p_err);
             p_container.removeChild(graphDiv);
             return null;
         }
 
-        if (window.vxOptions.protectedView) {
-            DocumentRenderer.sanitizeProtectedSvg(graphDiv.firstElementChild);
+        const svg = graphDiv.firstElementChild;
+        if (svg) {
+            DocumentRenderer.sanitizeProtectedSvg(svg);
         }
         return graphDiv;
     }
