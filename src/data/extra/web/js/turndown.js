@@ -47,7 +47,7 @@ class TurndownConverter {
         // Normalize before Turndown collapses whitespace in non-PRE elements.
         // This detached document never installs clipboard markup in the live page.
         const root = document.implementation.createHTMLDocument('').body;
-        root.innerHTML = p_html;
+        root.textContent = p_html;
         this.normalizeCodeBlocks(root);
         this.normalizeMath(root);
         return this.ts.turndown(root);
