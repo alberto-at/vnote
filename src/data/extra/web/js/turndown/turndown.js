@@ -133,7 +133,10 @@ var TurndownService = (function () {
       var className = node.firstChild.getAttribute('class') || '';
       var language = (className.match(/language-(\S+)/) || [null, ''])[1];
       var code = node.firstChild.textContent;
-      var fenceChar = options.fence.charAt(0);
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+      var fenceChar = escapeRegExp(options.fence.charAt(0));
       var fenceSize = 3;
       var fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm');
       var match;
